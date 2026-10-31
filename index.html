@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Brightloop — Subscription operations</title>
+  <title>Brightloop — Subscription Management System</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
@@ -12,40 +12,428 @@
 <body>
   <aside class="sidebar">
     <a class="brand" href="#"><span class="brand-mark">b</span><span>brightloop</span></a>
-    <button class="workspace"><span class="avatar">B</span><span>Brightloop Software</span><span class="chev">⌄</span></button>
+    <button class="workspace" id="btnActiveWorkspace"><span class="avatar">B</span><span>Brightloop Software</span><span class="chev">⌄</span></button>
     <nav>
       <p class="nav-label">WORKSPACE</p>
-      <a class="nav-item active" href="#overview"><span>◫</span> Overview</a>
-      <a class="nav-item" href="#subscriptions"><span>◌</span> Subscriptions <b>24</b></a>
-      <a class="nav-item" href="#invoices"><span>▤</span> Invoices</a>
-      <a class="nav-item" href="#payments"><span>◈</span> Payments</a>
+      <a class="nav-item active" href="#overview" data-target="overviewSection"><span>◫</span> Overview</a>
+      <a class="nav-item" href="#subscriptions" data-target="subscriptionsSection"><span>◌</span> Subscriptions <b id="navSubCount">0</b></a>
+      <a class="nav-item" href="#invoices" data-target="invoicesSection"><span>▤</span> Invoices <b id="navInvCount">0</b></a>
+      <a class="nav-item" href="#payments" data-target="paymentsSection"><span>◈</span> Payments</a>
       <p class="nav-label gap">CATALOG</p>
-      <a class="nav-item" href="#plans"><span>◇</span> Products & plans</a>
-      <a class="nav-item" href="#customers"><span>♙</span> Customers</a>
-      <a class="nav-item" href="#discounts"><span>♧</span> Discounts</a>
-      <p class="nav-label gap">SYSTEM</p>
-      <a class="nav-item" href="#settings"><span>⚙</span> Settings</a>
+      <a class="nav-item" href="#plans" data-target="catalogSection"><span>◇</span> Products & plans</a>
+      <a class="nav-item" href="#discounts" data-target="discountsSection"><span>♧</span> Discounts</a>
     </nav>
-    <div class="profile"><div class="avatar violet">AM</div><div><strong>Alex Morgan</strong><small>Administrator</small></div><button aria-label="Profile menu">⋯</button></div>
+    <div class="profile" id="userProfileBadge" style="cursor: pointer;" title="Current user">
+      <div class="avatar violet" id="userAvatar">AM</div>
+      <div>
+        <strong id="userName">Alex Morgan</strong>
+        <small id="userRole">Administrator</small>
+      </div>
+      <button aria-label="Profile menu">⋯</button>
+    </div>
   </aside>
+
   <main>
     <header>
-      <div><p class="eyebrow">OCTOBER 2026</p><h1>Good morning, Alex <span>✦</span></h1><p class="subhead">Here’s what’s happening with Brightloop today.</p></div>
-      <div class="header-actions"><button class="icon-button" aria-label="Notifications">♢<i></i></button><button class="new-button" id="newSubscription">+ <span>New subscription</span></button></div>
+      <div>
+        <p class="eyebrow">BRIGHTLOOP SUITE • <span id="currentDateDisplay">OCTOBER 2026</span></p>
+        <h1>Good day, <span id="headerGreetingName">Alex</span> <span>✦</span></h1>
+        <p class="subhead">Real-time subscription operations and finance engine.</p>
+      </div>
+      <div class="header-actions">
+        <!-- Manual Automated Billing Trigger (Runs daily cron logic on demand) -->
+        <button class="new-button" id="triggerBillingBtn" style="background: #2ea879; box-shadow: 0 4px 10px rgba(46, 168, 121, 0.28);" title="Simulate Daily node-cron automated billing">
+          ⚡ <span>Run Billing Cycle</span>
+        </button>
+        <button class="new-button" id="newSubscription">+ <span>New subscription</span></button>
+      </div>
     </header>
-    <section class="kpis" id="overview">
-      <article class="kpi accent"><div class="kpi-top"><span>MONTHLY RECURRING REVENUE</span><span class="trend positive">↗ 8.4%</span></div><strong>$48,240</strong><p>vs. $44,496 last month</p><div class="spark peach"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
-      <article class="kpi"><div class="kpi-top"><span>ACTIVE SUBSCRIPTIONS</span><span class="round-icon blue">◌</span></div><strong>1,284</strong><p><em class="positive">+46</em> from last month</p><div class="mini-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
-      <article class="kpi"><div class="kpi-top"><span>OUTSTANDING BALANCE</span><span class="round-icon amber">$</span></div><strong>$12,860</strong><p><em class="negative">$3,420</em> overdue</p><div class="balance-line"><i></i></div></article>
-      <article class="kpi"><div class="kpi-top"><span>PAYMENTS COLLECTED</span><span class="round-icon green">✓</span></div><strong>$62,104</strong><p><em class="positive">+12.6%</em> from last month</p><div class="mini-bars green-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
+
+    <!-- OVERVIEW SECTION -->
+    <div id="overviewSection" class="view-section">
+      <section class="kpis">
+        <article class="kpi accent">
+          <div class="kpi-top">
+            <span>MONTHLY RECURRING REVENUE</span>
+            <span class="trend positive">Live</span>
+          </div>
+          <strong id="kpiMmr">$0.00</strong>
+          <p id="kpiMmrSub">Estimated from active contracts</p>
+          <div class="spark peach"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </article>
+
+        <article class="kpi">
+          <div class="kpi-top">
+            <span>ACTIVE SUBSCRIPTIONS</span>
+            <span class="round-icon blue">◌</span>
+          </div>
+          <strong id="kpiActiveSubs">0</strong>
+          <p><em class="positive" id="kpiActiveSubDetail">Active in cycle</em></p>
+          <div class="mini-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </article>
+
+        <article class="kpi">
+          <div class="kpi-top">
+            <span>OUTSTANDING BALANCE</span>
+            <span class="round-icon amber">$</span>
+          </div>
+          <strong id="kpiOutstanding">$0.00</strong>
+          <p><em class="negative" id="kpiOverdueDetail">$0.00 overdue</em></p>
+          <div class="balance-line"><i></i></div>
+        </article>
+
+        <article class="kpi">
+          <div class="kpi-top">
+            <span>PAYMENTS COLLECTED</span>
+            <span class="round-icon green">✓</span>
+          </div>
+          <strong id="kpiPayments">$0.00</strong>
+          <p><em class="positive" id="kpiPaymentsDetail">Total verified revenue</em></p>
+          <div class="mini-bars green-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </article>
+      </section>
+
+      <div style="margin-bottom: 15px;">
+        <span class="perf-pill" id="perfPill">⚡ Benchmark: Querying PostgreSQL...</span>
+      </div>
+
+      <section class="content-grid">
+        <!-- Revenue Chart Panel -->
+        <article class="panel revenue-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Revenue overview</h2>
+              <p>Monthly recurring revenue performance</p>
+            </div>
+            <button class="select">2026 Fiscal <span>⌄</span></button>
+          </div>
+          <div class="legend">
+            <span><i class="dot primary"></i> Recurring revenue</span>
+            <span><i class="dot pale"></i> One-time payments</span>
+          </div>
+          <div class="chart">
+            <div class="chart-y">
+              <span>$60k</span><span>$40k</span><span>$20k</span><span>$0</span>
+            </div>
+            <svg viewBox="0 0 620 210" preserveAspectRatio="none" aria-label="Revenue trend chart">
+              <defs>
+                <linearGradient id="fill" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0" stop-color="#7968ed" stop-opacity=".26"/>
+                  <stop offset="1" stop-color="#7968ed" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path class="grid" d="M0 14H620M0 78H620M0 142H620M0 206H620"/>
+              <path class="area" d="M0 170 C25 160 37 155 55 161 S86 145 105 150 S133 141 155 144 S182 130 205 134 S232 116 258 125 S285 111 309 116 S335 100 360 108 S388 83 412 96 S438 88 464 79 S493 60 516 72 S544 49 570 59 S602 37 620 44 V210 H0Z"/>
+              <path class="line" d="M0 170 C25 160 37 155 55 161 S86 145 105 150 S133 141 155 144 S182 130 205 134 S232 116 258 125 S285 111 309 116 S335 100 360 108 S388 83 412 96 S438 88 464 79 S493 60 516 72 S544 49 570 59 S602 37 620 44"/>
+              <circle cx="516" cy="72" r="5" class="point"/>
+            </svg>
+          </div>
+          <div class="chart-x">
+            <span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span>
+          </div>
+        </article>
+
+        <!-- Overdue Invoices Alert Panel -->
+        <article class="panel activity">
+          <div class="panel-head">
+            <div>
+              <h2>Overdue Invoices Alert</h2>
+              <p>Invoices past due date requiring attention</p>
+            </div>
+          </div>
+          <div class="activity-list" id="overdueInvoicesList">
+            <div style="padding: 20px; color: #8e8ca5; text-align: center;">Loading overdue invoices...</div>
+          </div>
+        </article>
+      </section>
+    </div>
+
+    <!-- SUBSCRIPTIONS SECTION -->
+    <section class="panel subscriptions view-section" id="subscriptionsSection">
+      <div class="panel-head">
+        <div>
+          <h2>Subscriptions Management <span class="count" id="subsCountBadge">0</span></h2>
+          <p>Strict Lifecycle: Draft ➔ Quotation ➔ Confirmed ➔ Active ➔ Closed</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>CODE & CUSTOMER</th>
+              <th>PLAN</th>
+              <th>STATUS</th>
+              <th>NEXT BILLING</th>
+              <th>TOTAL</th>
+              <th style="text-align: right;">ACTION</th>
+            </tr>
+          </thead>
+          <tbody id="subsTableBody">
+            <tr><td colspan="6" style="text-align: center; padding: 25px;">Loading subscriptions...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </section>
-    <section class="content-grid">
-      <article class="panel revenue-panel"><div class="panel-head"><div><h2>Revenue overview</h2><p>Monthly recurring revenue over time</p></div><button class="select">Last 12 months <span>⌄</span></button></div><div class="legend"><span><i class="dot primary"></i> Recurring revenue</span><span><i class="dot pale"></i> One-time revenue</span></div><div class="chart"><div class="chart-y"><span>$60k</span><span>$40k</span><span>$20k</span><span>$0</span></div><svg viewBox="0 0 620 210" preserveAspectRatio="none" aria-label="Revenue trend chart"><defs><linearGradient id="fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#7968ed" stop-opacity=".26"/><stop offset="1" stop-color="#7968ed" stop-opacity="0"/></linearGradient></defs><path class="grid" d="M0 14H620M0 78H620M0 142H620M0 206H620"/><path class="area" d="M0 170 C25 160 37 155 55 161 S86 145 105 150 S133 141 155 144 S182 130 205 134 S232 116 258 125 S285 111 309 116 S335 100 360 108 S388 83 412 96 S438 88 464 79 S493 60 516 72 S544 49 570 59 S602 37 620 44 V210 H0Z"/><path class="line" d="M0 170 C25 160 37 155 55 161 S86 145 105 150 S133 141 155 144 S182 130 205 134 S232 116 258 125 S285 111 309 116 S335 100 360 108 S388 83 412 96 S438 88 464 79 S493 60 516 72 S544 49 570 59 S602 37 620 44"/><circle cx="516" cy="72" r="5" class="point"/><g class="tooltip"><rect x="469" y="15" rx="7" width="95" height="39"/><text x="480" y="31">OCT 2026</text><text x="480" y="45">$48,240</text></g></svg></div><div class="chart-x"><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span></div></article>
-      <article class="panel activity"><div class="panel-head"><div><h2>Recent activity</h2><p>Latest events across your workspace</p></div><button class="text-button">View all</button></div><div class="activity-list"><div class="activity-row"><span class="activity-icon mint">↑</span><div><strong>Payment received</strong><p>Acme Inc. paid invoice <b>INV-1048</b></p></div><time>2 min ago</time></div><div class="activity-row"><span class="activity-icon purple">＋</span><div><strong>New subscription</strong><p>Northstar Labs joined <b>Growth plan</b></p></div><time>18 min ago</time></div><div class="activity-row"><span class="activity-icon yellow">↻</span><div><strong>Subscription renewed</strong><p>Vertex Digital · <b>Pro plan</b></p></div><time>1 hr ago</time></div><div class="activity-row"><span class="activity-icon rose">!</span><div><strong>Invoice overdue</strong><p>Orbit Co. · <b>INV-1031</b></p></div><time>3 hrs ago</time></div></div></article>
+
+    <!-- INVOICES SECTION -->
+    <section class="panel subscriptions view-section" id="invoicesSection" style="display:none; margin-top:20px;">
+      <div class="panel-head">
+        <div>
+          <h2>Billing Invoices <span class="count" id="invoicesCountBadge">0</span></h2>
+          <p>Generated by Automated Billing Engine (Draft ➔ Confirmed ➔ Paid)</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>INVOICE #</th>
+              <th>CUSTOMER</th>
+              <th>STATUS</th>
+              <th>DUE DATE</th>
+              <th>AMOUNT</th>
+              <th>PAID</th>
+              <th style="text-align: right;">ACTION</th>
+            </tr>
+          </thead>
+          <tbody id="invoicesTableBody">
+            <tr><td colspan="7" style="text-align: center; padding: 25px;">Loading invoices...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </section>
-    <section class="panel subscriptions" id="subscriptions"><div class="panel-head"><div><h2>Subscriptions requiring attention <span class="count">6</span></h2><p>Keep your billing cycle moving smoothly.</p></div><button class="text-button">View subscriptions <span>→</span></button></div><div class="table-wrap"><table><thead><tr><th>Customer</th><th>PLAN</th><th>STATUS</th><th>NEXT BILLING</th><th>AMOUNT</th><th></th></tr></thead><tbody><tr><td><div class="customer"><span class="customer-avatar coral">NL</span><strong>Northstar Labs</strong></div></td><td>Growth · Monthly</td><td><span class="status active-dot">Active</span></td><td><b>Today</b></td><td><strong>$349.00</strong></td><td><button class="dots">•••</button></td></tr><tr><td><div class="customer"><span class="customer-avatar navy">OD</span><strong>Orbit Digital</strong></div></td><td>Pro · Annual</td><td><span class="status warning-dot">Payment failed</span></td><td><b>Oct 31, 2026</b></td><td><strong>$2,988.00</strong></td><td><button class="dots">•••</button></td></tr><tr><td><div class="customer"><span class="customer-avatar olive">AC</span><strong>Acme Inc.</strong></div></td><td>Enterprise · Annual</td><td><span class="status soon-dot">Renews soon</span></td><td><b>Nov 02, 2026</b></td><td><strong>$8,400.00</strong></td><td><button class="dots">•••</button></td></tr></tbody></table></div></section>
+
+    <!-- PAYMENTS SECTION -->
+    <section class="panel subscriptions view-section" id="paymentsSection" style="display:none; margin-top:20px;">
+      <div class="panel-head">
+        <div>
+          <h2>Payments Received</h2>
+          <p>Recorded incoming payments against confirmed invoices</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>PAYMENT REF</th>
+              <th>INVOICE #</th>
+              <th>METHOD</th>
+              <th>AMOUNT</th>
+              <th>DATE</th>
+              <th>NOTES</th>
+            </tr>
+          </thead>
+          <tbody id="paymentsTableBody">
+            <tr><td colspan="6" style="text-align: center; padding: 25px;">Loading payments...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CATALOG & PLANS SECTION -->
+    <section class="panel subscriptions view-section" id="catalogSection" style="display:none; margin-top:20px;">
+      <div class="panel-head">
+        <div>
+          <h2>Products, Variants & Plans</h2>
+          <p>Includes Odoo Brand Edition Variant (+$560) and Billing Frequencies</p>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px 0;">
+        <div>
+          <h3 style="font-size: 13px; margin-bottom: 12px; color:#5b5872;">Products & Variants</h3>
+          <div id="productsListContainer">Loading products...</div>
+        </div>
+        <div>
+          <h3 style="font-size: 13px; margin-bottom: 12px; color:#5b5872;">Subscription Plans</h3>
+          <div id="plansListContainer">Loading plans...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DISCOUNTS SECTION -->
+    <section class="panel subscriptions view-section" id="discountsSection" style="display:none; margin-top:20px;">
+      <div class="panel-head">
+        <div>
+          <h2>Discount Rules</h2>
+          <p>Admin-configured fixed amount and percentage discounts</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>CODE</th>
+              <th>TYPE & VALUE</th>
+              <th>MIN PURCHASE</th>
+              <th>ACTIVE DATES</th>
+              <th>USAGE</th>
+              <th>SCOPE</th>
+            </tr>
+          </thead>
+          <tbody id="discountsTableBody">
+            <tr><td colspan="6" style="text-align: center; padding: 25px;">Loading discounts...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </main>
-  <div class="toast" id="toast">Subscription draft created <button>×</button></div>
+
+  <!-- MODAL 1: CREATE NEW SUBSCRIPTION -->
+  <div class="modal-backdrop" id="newSubModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3>Create New Subscription</h3>
+          <p>Initial Status: Draft (Strict progression: Draft ➔ Quotation ➔ Confirmed ➔ Active ➔ Closed)</p>
+        </div>
+        <button class="modal-close" data-close="newSubModal">×</button>
+      </div>
+      <form id="newSubForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Customer Account</label>
+            <select class="form-select" id="subCustomerSelect" required></select>
+          </div>
+
+          <div class="form-group">
+            <label>Billing Plan</label>
+            <select class="form-select" id="subPlanSelect" required></select>
+            <small id="planRuleHint">Plan frequency: Monthly | Minimum Quantity: 2</small>
+          </div>
+
+          <div class="form-group">
+            <label>Product & Variant (Includes Odoo Brand Edition +$560)</label>
+            <select class="form-select" id="subProductSelect" required></select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Quantity (Licenses / Seats)</label>
+              <input type="number" class="form-input" id="subQuantity" min="1" value="2" required />
+            </div>
+            <div class="form-group">
+              <label>Discount Code (Optional)</label>
+              <input type="text" class="form-input" id="subDiscountCode" placeholder="e.g. HACKATHON20" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Start Date</label>
+            <input type="date" class="form-input" id="subStartDate" required />
+          </div>
+
+          <!-- Dynamic Pricing Preview -->
+          <div class="pricing-preview">
+            <div class="pricing-line">
+              <span>Unit Price (Base + Variant extra):</span>
+              <span id="previewUnitPrice">$0.00</span>
+            </div>
+            <div class="pricing-line">
+              <span>Subtotal:</span>
+              <span id="previewSubtotal">$0.00</span>
+            </div>
+            <div class="pricing-line">
+              <span>Taxes (18% GST):</span>
+              <span id="previewTax">$0.00</span>
+            </div>
+            <div class="pricing-line total">
+              <span>Estimated Grand Total:</span>
+              <span id="previewGrandTotal" style="color: #6e5de0;">$0.00</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" data-close="newSubModal">Cancel</button>
+          <button type="submit" class="btn-primary" id="btnSubmitSub">Create Draft Subscription</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: RECORD PAYMENT -->
+  <div class="modal-backdrop" id="paymentModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3>Record Invoice Payment</h3>
+          <p>Auto-transitions invoice status from Confirmed ➔ Paid upon full settlement</p>
+        </div>
+        <button class="modal-close" data-close="paymentModal">×</button>
+      </div>
+      <form id="recordPaymentForm">
+        <input type="hidden" id="payInvoiceId" />
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Invoice Number</label>
+            <input type="text" class="form-input" id="payInvoiceNumber" readonly style="background:#f3f2f7;" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Remaining Balance ($)</label>
+              <input type="text" class="form-input" id="payRemainingBalance" readonly style="background:#f3f2f7; font-weight:700;" />
+            </div>
+            <div class="form-group">
+              <label>Payment Amount ($)</label>
+              <input type="number" step="0.01" class="form-input" id="payAmount" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Payment Method</label>
+            <select class="form-select" id="payMethod" required>
+              <option value="Credit Card">Credit Card</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+              <option value="Stripe">Stripe</option>
+              <option value="Cash">Cash</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Notes / Transaction Reference</label>
+            <input type="text" class="form-input" id="payNotes" placeholder="e.g. Wire transfer ref #88329" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" data-close="paymentModal">Cancel</button>
+          <button type="submit" class="btn-primary">Record Payment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 3: PROGRESS STATUS MODAL -->
+  <div class="modal-backdrop" id="statusModal">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header">
+        <div>
+          <h3>Progress Status</h3>
+          <p>Enforcing Strict Lifecycle Transition</p>
+        </div>
+        <button class="modal-close" data-close="statusModal">×</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 13px; margin-bottom: 12px;">
+          Subscription: <strong id="progressSubCode"></strong><br>
+          Current Status: <span id="progressCurrentStatusBadge" class="status-badge"></span>
+        </p>
+        <p style="font-size: 12px; color: #767385;" id="progressExplain">
+          Advance subscription to the next mandatory state in the lifecycle.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" data-close="statusModal">Cancel</button>
+        <button type="button" class="btn-primary" id="btnConfirmTransition">Advance to Next State</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast" id="toast">
+    <span id="toastMsg">Action completed successfully</span>
+    <button>×</button>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>

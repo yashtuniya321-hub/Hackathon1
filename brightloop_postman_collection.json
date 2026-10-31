@@ -1,0 +1,225 @@
+{
+  "info": {
+    "name": "Brightloop Subscription Management API",
+    "_postman_id": "brightloop-sub-mgmt-2026",
+    "description": "Complete collection for Brightloop Software Subscription Management System (Odoo Hackathon). Includes Auth, RBAC, Products, Plans, Discounts, Subscriptions, Automated Invoicing Cron, Payments, and Finance Dashboard.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000/api", "type": "string" },
+    { "key": "token", "value": "", "type": "string" },
+    { "key": "adminToken", "value": "", "type": "string" },
+    { "key": "customerToken", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication & Users",
+      "item": [
+        {
+          "name": "Login (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@brightloop.io\",\n  \"password\": \"Admin@12345\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Login (Customer)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@acme.com\",\n  \"password\": \"Customer@12345\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Register Customer (Password Rule Enforced)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@acme.com\",\n  \"password\": \"Brightloop@2026\",\n  \"firstName\": \"Alex\",\n  \"lastName\": \"Smith\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+          }
+        },
+        {
+          "name": "Admin Register Staff Member",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"staff2@brightloop.io\",\n  \"password\": \"Staff@Strong99\",\n  \"firstName\": \"David\",\n  \"lastName\": \"Miller\",\n  \"role\": \"Staff\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register-staff", "host": ["{{baseUrl}}"], "path": ["auth", "register-staff"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Products & Variants",
+      "item": [
+        {
+          "name": "List Products with Variants",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/products", "host": ["{{baseUrl}}"], "path": ["products"] }
+          }
+        },
+        {
+          "name": "Create Product with Odoo Variant (+560)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Brightloop Analytics Engine\",\n  \"sku\": \"BL-ANALYTICS-01\",\n  \"description\": \"Real-time analytics platform\",\n  \"salesPrice\": 800.00,\n  \"costPrice\": 250.00,\n  \"variants\": [\n    {\n      \"variantName\": \"Odoo Brand Edition\",\n      \"skuSuffix\": \"ODOO\",\n      \"priceExtra\": 560.00\n    }\n  ]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/products", "host": ["{{baseUrl}}"], "path": ["products"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Plans & Discounts",
+      "item": [
+        {
+          "name": "List Plans",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/plans", "host": ["{{baseUrl}}"], "path": ["plans"] }
+          }
+        },
+        {
+          "name": "Create Plan (Frequency & Closure Rule)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Quarterly Professional\",\n  \"billingFrequency\": \"monthly\",\n  \"minimumQuantity\": 3,\n  \"closureRule\": \"auto-close\",\n  \"baseFee\": 40.00\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/plans", "host": ["{{baseUrl}}"], "path": ["plans"] }
+          }
+        },
+        {
+          "name": "Create Discount Rule (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"FLASH30\",\n  \"discountType\": \"percentage\",\n  \"value\": 30.00,\n  \"minPurchaseAmount\": 400.00,\n  \"startDate\": \"2026-01-01\",\n  \"endDate\": \"2026-12-31\",\n  \"usageLimit\": 100,\n  \"targetScope\": \"subscription\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/discounts", "host": ["{{baseUrl}}"], "path": ["discounts"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Subscriptions & Quotes",
+      "item": [
+        {
+          "name": "Create Subscription (Draft)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planId\": 1,\n  \"startDate\": \"2026-01-01\",\n  \"discountCode\": \"HACKATHON20\",\n  \"lines\": [\n    {\n      \"productId\": 1,\n      \"variantId\": 1,\n      \"quantity\": 2,\n      \"taxRate\": 0.18\n    }\n  ]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/subscriptions", "host": ["{{baseUrl}}"], "path": ["subscriptions"] }
+          }
+        },
+        {
+          "name": "Progress Status (Draft -> Quotation -> Confirmed -> Active -> Closed)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Quotation\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/subscriptions/1/status", "host": ["{{baseUrl}}"], "path": ["subscriptions", "1", "status"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Invoicing & Billing Cron",
+      "item": [
+        {
+          "name": "Trigger Daily Billing Cycle (Manual Cron Trigger)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/invoices/trigger-billing", "host": ["{{baseUrl}}"], "path": ["invoices", "trigger-billing"] }
+          }
+        },
+        {
+          "name": "List Invoices",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/invoices", "host": ["{{baseUrl}}"], "path": ["invoices"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Payments & Finance Dashboard",
+      "item": [
+        {
+          "name": "Record Incoming Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoiceId\": 1,\n  \"paymentMethod\": \"Bank Transfer\",\n  \"amount\": 1180.00,\n  \"notes\": \"Hackathon sponsor demo payment\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/payments", "host": ["{{baseUrl}}"], "path": ["payments"] }
+          }
+        },
+        {
+          "name": "Finance Dashboard Query (< 2 sec benchmark)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/dashboard/finance", "host": ["{{baseUrl}}"], "path": ["dashboard", "finance"] }
+          }
+        }
+      ]
+    }
+  ]
+}

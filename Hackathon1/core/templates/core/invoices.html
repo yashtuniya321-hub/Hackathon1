@@ -1,0 +1,15 @@
+{% extends "core/base.html" %}
+{% load humanize %}
+{% block title %}Invoices | Brightloop{% endblock %}
+{% block breadcrumb %}Invoices{% endblock %}
+{% block content %}
+<section class="page-head"><div><h1>{% if staff_user %}Invoices{% else %}My invoices{% endif %}</h1><p class="subtitle">Review billing periods, amounts due, and payment status.</p></div></section>
+<div class="stats"><article class="stat"><div class="stat-label">All invoices</div><div class="stat-value">{{ total_invoices|intcomma }}</div></article><article class="stat"><div class="stat-label">Paid</div><div class="stat-value">{{ paid_invoices|intcomma }}</div></article><article class="stat"><div class="stat-label">Open</div><div class="stat-value">{{ unpaid_invoices|intcomma }}</div></article><article class="stat"><div class="stat-label">Overdue</div><div class="stat-value">{{ overdue_invoices|intcomma }}</div></article></div>
+<section class="panel"><div class="panel-head"><h2>Invoice register</h2></div>
+  <form class="filters" method="get"><input type="search" name="search" value="{{ search }}" placeholder="Search invoice or customer"><select name="status"><option value="">Every status</option>{% for value,label in statuses %}<option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select><button class="button button-small">Filter</button><a class="button-secondary button-small" href="{% url 'invoices' %}">Clear</a></form>
+  <div class="table-wrap"><table><thead><tr><th>Invoice</th>{% if staff_user %}<th>Customer</th>{% endif %}<th>Period</th><th>Due date</th><th>Amount</th><th>Remaining</th><th>Status</th><th></th></tr></thead><tbody>
+  {% for invoice in invoices %}<tr><td><a class="ref" href="{% url 'invoice_detail' invoice.pk %}">{{ invoice.invoice_number }}</a><div class="muted">{{ invoice.subscription.subscription_number }}</div></td>{% if staff_user %}<td>{{ invoice.subscription.customer.name }}</td>{% endif %}<td>{{ invoice.period_start|date:"d M Y" }} – {{ invoice.period_end|date:"d M Y" }}</td><td>{{ invoice.due_date|date:"d M Y" }}</td><td>₹{{ invoice.total_amount|floatformat:2|intcomma }}</td><td>₹{{ invoice.amount_due|floatformat:2|intcomma }}</td><td><span class="badge {{ invoice.status }}">{{ invoice.status }}</span></td><td><a class="button-secondary button-small" href="{% url 'invoice_detail' invoice.pk %}">Open</a></td></tr>{% empty %}<tr><td colspan="8" class="empty">No invoices found.</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% if invoices.paginator.num_pages > 1 %}<div class="pagination">{% if invoices.has_previous %}<a href="?page={{ invoices.previous_page_number }}&search={{ search|urlencode }}&status={{ selected_status|urlencode }}">← Newer</a>{% endif %}<span>Page {{ invoices.number }} of {{ invoices.paginator.num_pages }}</span>{% if invoices.has_next %}<a href="?page={{ invoices.next_page_number }}&search={{ search|urlencode }}&status={{ selected_status|urlencode }}">Older →</a>{% endif %}</div>{% endif %}
+</section>
+{% endblock %}

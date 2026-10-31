@@ -1,0 +1,213 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plans | Brightloop ERP</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7f6fc;
+            color: #25213b;
+        }
+        .sidebar {
+            width: 245px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: white;
+            border-right: 1px solid #ece9f4;
+            padding: 28px 18px;
+        }
+        .brand {
+            font-size: 23px;
+            font-weight: 800;
+            color: #6841d9;
+            margin: 0 0 38px 10px;
+        }
+        .nav {
+            display: block;
+            padding: 13px 14px;
+            margin: 6px 0;
+            border-radius: 9px;
+            text-decoration: none;
+            color: #68647a;
+            font-size: 14px;
+        }
+        .nav:hover, .nav.active {
+            background: #f0ebff;
+            color: #6841d9;
+            font-weight: 700;
+        }
+        .main { margin-left: 245px; padding: 38px 45px; }
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        h1 { margin: 0 0 7px; font-size: 27px; }
+        h2 { font-size: 17px; margin: 0; }
+        .muted { color: #89859a; font-size: 14px; }
+        .button {
+            background: #7048df;
+            color: white;
+            padding: 12px 19px;
+            border-radius: 9px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+        .stat, .panel {
+            background: white;
+            border: 1px solid #eeeaf5;
+            border-radius: 13px;
+            padding: 23px;
+        }
+        .stat p { color: #89859a; margin: 0 0 12px; font-size: 13px; }
+        .stat strong { font-size: 27px; }
+        .panel-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .search { display: flex; gap: 8px; }
+        input {
+            border: 1px solid #e5e1ed;
+            border-radius: 8px;
+            padding: 10px 12px;
+            outline: none;
+        }
+        input:focus { border-color: #7048df; }
+        .search button {
+            background: #f0ebff;
+            color: #6841d9;
+            border: 0;
+            border-radius: 8px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            text-align: left;
+            color: #89859a;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 14px 10px;
+            border-bottom: 1px solid #eeeaf5;
+        }
+        td {
+            padding: 17px 10px;
+            border-bottom: 1px solid #f1eff6;
+            font-size: 14px;
+        }
+        .status {
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            background: #e9f8ef;
+            color: #23834c;
+        }
+        .inactive { background: #f1eff4; color: #777; }
+        .empty { text-align: center; padding: 35px; color: #89859a; }
+        @media(max-width: 800px) {
+            .sidebar { width: 185px; }
+            .main { margin-left: 185px; padding: 25px 18px; }
+            .top, .panel-head { align-items: flex-start; flex-direction: column; }
+            .stats { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="brand">Brightloop.</div>
+    <a class="nav" href="/">▦ Dashboard</a>
+    <a class="nav" href="/subscriptions/">▤ Subscriptions</a>
+    <a class="nav" href="/customers/">♙ Customers</a>
+    <a class="nav" href="/products/">▣ Products</a>
+    <a class="nav active" href="/plans/">◇ Plans</a>
+    <a class="nav" href="/admin/">⚙ Administration</a>
+</aside>
+
+<main class="main">
+    <div class="top">
+        <div>
+            <h1>Subscription Plans</h1>
+            <div class="muted">Manage pricing and recurring billing plans.</div>
+        </div>
+        <a class="button" href="{% url 'plan_create' %}">+ Create Plan</a>
+    </div>
+
+    <section class="stats">
+        <div class="stat">
+            <p>Total Plans</p>
+            <strong>{{ total_plans }}</strong>
+        </div>
+        <div class="stat">
+            <p>Active Plans</p>
+            <strong>{{ active_plans }}</strong>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-head">
+            <h2>Available Plans</h2>
+            <form class="search" method="GET">
+                <input type="text" name="search" value="{{ search }}"
+                       placeholder="Search plans...">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>PLAN NAME</th>
+                    <th>DESCRIPTION</th>
+                    <th>PRICE</th>
+                    <th>BILLING CYCLE</th>
+                    <th>STATUS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for plan in plans %}
+                <tr>
+                    <td><strong>{{ plan.name }}</strong></td>
+                    <td>{{ plan.description|default:"—"|truncatewords:10 }}</td>
+                    <td><strong>₹{{ plan.price|floatformat:2 }}</strong></td>
+                    <td>{{ plan.billing_cycle }}</td>
+                    <td>
+                        {% if plan.is_active %}
+                            <span class="status">Active</span>
+                        {% else %}
+                            <span class="status inactive">Inactive</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="empty">No plans found. Create your first plan!</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</main>
+
+</body>
+</html>

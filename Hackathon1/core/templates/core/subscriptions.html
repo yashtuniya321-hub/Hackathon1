@@ -1,0 +1,25 @@
+{% extends "core/base.html" %}
+{% load humanize %}
+{% block title %}Subscriptions | Brightloop{% endblock %}
+{% block breadcrumb %}Subscriptions{% endblock %}
+{% block content %}
+<section class="page-head"><div><h1>{% if staff_user %}Subscriptions{% else %}My subscriptions{% endif %}</h1><p class="subtitle">Track plan terms, billing dates, status, and renewal actions.</p></div><a class="button" href="{% url 'subscription_create' %}">＋ New subscription</a></section>
+<div class="stats"><article class="stat"><div class="stat-label">Subscriptions</div><div class="stat-value">{{ total_count|intcomma }}</div></article><article class="stat"><div class="stat-label">Active</div><div class="stat-value">{{ active_count|intcomma }}</div></article><article class="stat"><div class="stat-label">Monthly run rate</div><div class="stat-value">₹{{ revenue|floatformat:2|intcomma }}</div></article></div>
+<section class="panel">
+  <div class="panel-head"><h2>Subscription records</h2></div>
+  <form class="filters" method="get"><input type="search" name="search" value="{{ search }}" placeholder="Search customer, plan, or subscription number"><select name="status"><option value="">Every status</option>{% for value,label in statuses %}<option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select><button class="button button-small">Filter</button><a class="button-secondary button-small" href="{% url 'subscriptions' %}">Clear</a></form>
+  <div class="table-wrap"><table><thead><tr><th>Number</th>{% if staff_user %}<th>Customer</th>{% endif %}<th>Plan</th><th>Start</th><th>Expiry</th><th>Status</th><th>Value</th><th>Actions</th></tr></thead><tbody>
+  {% for sub in subscriptions %}<tr><td class="ref">{{ sub.subscription_number }}</td>{% if staff_user %}<td>{{ sub.customer.name }}<div class="muted">{{ sub.customer.company_name|default:sub.customer.email }}</div></td>{% endif %}<td>{{ sub.plan.name }}<div class="muted">{{ sub.plan.billing_cycle }} · {{ sub.quantity }} unit{{ sub.quantity|pluralize }}</div></td><td>{{ sub.start_date|date:"d M Y" }}</td><td>{{ sub.expiry_date|date:"d M Y"|default:"—" }}</td><td><span class="badge {{ sub.status }}">{{ sub.status }}</span></td><td>₹{{ sub.total_amount|floatformat:2|intcomma }}</td><td><div class="row-actions">
+    {% if staff_user %}<a class="button-secondary button-small" href="{% url 'subscription_edit' sub.pk %}">Edit</a>{% endif %}
+    {% if staff_user and sub.status == "Active" %}<form class="inline-form" method="post" action="{% url 'invoice_create' sub.pk %}">{% csrf_token %}<button class="button button-small">Invoice</button></form>{% endif %}
+    {% if staff_user and sub.status == "Draft" or staff_user and sub.status == "Quotation" %}<form class="inline-form" method="post" action="{% url 'subscription_action' sub.pk 'confirm' %}">{% csrf_token %}<button class="button-secondary button-small">Confirm</button></form>{% endif %}
+    {% if staff_user and sub.status == "Confirmed" %}<form class="inline-form" method="post" action="{% url 'subscription_action' sub.pk 'activate' %}">{% csrf_token %}<button class="button-secondary button-small">Activate</button></form>{% endif %}
+    {% if sub.status == "Active" %}<form class="inline-form" method="post" action="{% url 'subscription_action' sub.pk 'pause' %}">{% csrf_token %}<button class="button-secondary button-small">Pause</button></form>{% endif %}
+    {% if sub.status == "Paused" %}<form class="inline-form" method="post" action="{% url 'subscription_action' sub.pk 'resume' %}">{% csrf_token %}<button class="button-secondary button-small">Resume</button></form>{% endif %}
+    {% if sub.status == "Closed" or sub.expiry_date and sub.status != "Draft" and sub.status != "Quotation" %}<form class="inline-form" method="post" action="{% url 'subscription_action' sub.pk 'renew' %}">{% csrf_token %}<button class="button-secondary button-small">Renew</button></form>{% endif %}
+    {% if sub.status != "Closed" and sub.status != "Draft" %}<form class="inline-form" method="post" action="{% url 'subscription_action' sub.pk 'close' %}">{% csrf_token %}<button class="button-danger button-small">Close</button></form>{% endif %}
+  </div></td></tr>{% empty %}<tr><td colspan="8" class="empty">No subscriptions found. Create a subscription to get started.</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% if subscriptions.paginator.num_pages > 1 %}<div class="pagination">{% if subscriptions.has_previous %}<a href="?page={{ subscriptions.previous_page_number }}&search={{ search|urlencode }}&status={{ selected_status|urlencode }}">← Newer</a>{% endif %}<span>Page {{ subscriptions.number }} of {{ subscriptions.paginator.num_pages }}</span>{% if subscriptions.has_next %}<a href="?page={{ subscriptions.next_page_number }}&search={{ search|urlencode }}&status={{ selected_status|urlencode }}">Older →</a>{% endif %}</div>{% endif %}
+</section>
+{% endblock %}

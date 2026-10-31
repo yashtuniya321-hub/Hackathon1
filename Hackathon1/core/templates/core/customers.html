@@ -1,0 +1,11 @@
+{% extends "core/base.html" %}
+{% load humanize %}
+{% block title %}Customers | Brightloop{% endblock %}
+{% block breadcrumb %}Customers{% endblock %}
+{% block content %}
+<section class="page-head"><div><h1>Customers</h1><p class="subtitle">Customer profiles and account access.</p></div><a class="button" href="{% url 'customer_create' %}">＋ Add customer</a></section>
+<div class="stats"><article class="stat"><div class="stat-label">Customer records</div><div class="stat-value">{{ total_customers|intcomma }}</div></article></div>
+<section class="panel"><form class="filters" method="get"><input type="search" name="search" value="{{ search }}" placeholder="Search name, company, or email"><button class="button button-small">Search</button><a class="button-secondary button-small" href="{% url 'customers' %}">Clear</a></form>
+<div class="table-wrap"><table><thead><tr><th>Customer</th><th>Company</th><th>Email</th><th>Phone</th><th>Joined</th><th>Portal</th></tr></thead><tbody>{% for customer in customers %}<tr><td><strong>{{ customer.name }}</strong></td><td>{{ customer.company_name|default:"—" }}</td><td><a href="mailto:{{ customer.email }}">{{ customer.email }}</a></td><td>{{ customer.phone|default:"—" }}</td><td>{{ customer.created_at|date:"d M Y" }}</td><td>{% if customer.user %}<span class="badge Active">Enabled</span>{% else %}<span class="badge Paused">No account</span>{% endif %}</td></tr>{% empty %}<tr><td colspan="6" class="empty">No customers found.</td></tr>{% endfor %}</tbody></table></div>
+{% if customers.paginator.num_pages > 1 %}<div class="pagination">{% if customers.has_previous %}<a href="?page={{ customers.previous_page_number }}&search={{ search|urlencode }}">← Newer</a>{% endif %}<span>Page {{ customers.number }} of {{ customers.paginator.num_pages }}</span>{% if customers.has_next %}<a href="?page={{ customers.next_page_number }}&search={{ search|urlencode }}">Older →</a>{% endif %}</div>{% endif %}</section>
+{% endblock %}

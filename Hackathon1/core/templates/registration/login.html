@@ -1,0 +1,6 @@
+{% extends "registration/auth_base.html" %}
+{% block title %}Sign in | Brightloop{% endblock %}
+{% block body %}<h1>Welcome back</h1><p class="subtitle">Sign in to manage your Brightloop account.</p>
+{% if form.errors %}<div class="errorlist" style="margin-bottom:14px">Email or password was not recognized.</div>{% endif %}
+<form method="post">{% csrf_token %}<div class="field"><label for="id_username">Email or username</label><input id="id_username" type="text" name="username" value="{{ form.username.value|default:'' }}" autocomplete="username" required autofocus></div><div class="field"><label for="id_password">Password</label><input id="id_password" type="password" name="password" autocomplete="current-password" required></div>{% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}<button class="button" type="submit">Sign in</button></form>
+<div class="links"><a href="{% url 'password_reset' %}">Forgot password?</a><a href="{% url 'signup' %}">Create customer account</a></div>{% endblock %}

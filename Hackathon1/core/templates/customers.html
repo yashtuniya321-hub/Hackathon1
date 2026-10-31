@@ -1,0 +1,114 @@
+
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customers | Brightloop ERP</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f5f5fb;color:#29283f}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:218px;background:white;border-right:1px solid #e9e7f0;padding:25px 14px;flex-shrink:0}
+.brand{font-size:19px;font-weight:800;margin:4px 10px 55px}
+.brand span{display:inline-grid;place-items:center;background:#7950bb;color:white;border-radius:12px;width:39px;height:39px;margin-right:9px}
+.nav-label{font-size:10px;font-weight:800;letter-spacing:1.5px;color:#a4a1b7;margin:25px 10px 12px}
+.nav a{display:block;text-decoration:none;color:#77748d;font-size:13px;font-weight:600;padding:12px;border-radius:10px;margin:4px 0}
+.nav a.active,.nav a:hover{background:#7950bb;color:white}
+.main{flex:1;min-width:0}
+.topbar{height:68px;background:white;border-bottom:1px solid #e9e7f0;display:flex;align-items:center;justify-content:space-between;padding:0 30px;font-size:12px;color:#77748d}
+.content{padding:30px;max-width:1450px;margin:auto}
+.heading{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:25px}
+h1{font-size:26px;letter-spacing:-1px}
+.subtitle{color:#9290a7;font-size:13px;margin-top:6px}
+.btn{background:#7950bb;color:white;text-decoration:none;border:0;border-radius:9px;padding:13px 18px;font-weight:700;font-size:12px;cursor:pointer;display:inline-block}
+.stat,.panel{background:white;border:1px solid #ebe9f1;border-radius:14px;padding:22px;box-shadow:0 5px 18px #30205b08}
+.stat{margin-bottom:20px}
+.stat small{color:#9290a7;font-size:12px;font-weight:600}
+.stat strong{display:block;font-size:27px;margin-top:12px}
+.panel{padding:22px}
+.panel h2{font-size:16px;margin-bottom:18px}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+input{border:1px solid #e5e2ed;border-radius:9px;padding:11px 13px;background:white;color:#333;font-size:12px;outline:none;min-width:220px;flex:1}
+table{width:100%;border-collapse:collapse;text-align:left}
+th{font-size:10px;letter-spacing:.8px;color:#9290a7;background:#faf9fc;padding:14px 11px}
+td{padding:17px 11px;border-bottom:1px solid #f0eef4;font-size:12px;font-weight:600}
+.muted{color:#9290a7;font-size:11px;font-weight:400;margin-top:4px}
+.avatar{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#f0eafa;color:#7950bb;font-weight:800;margin-right:9px}
+.email{color:#7950bb;font-weight:500}
+.empty{text-align:center;padding:45px;color:#9290a7}
+.footer{text-align:center;color:#aaa7b6;font-size:10px;padding:22px}
+.table-wrap{overflow-x:auto}
+@media(max-width:850px){.sidebar{width:175px}.content{padding:20px}.table-wrap table{min-width:650px}}
+@media(max-width:580px){.sidebar{display:none}.topbar{padding:0 16px}.content{padding:16px}.heading{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+<div class="brand"><span>B</span>Brightloop</div>
+<div class="nav-label">OPERATIONS & SALES</div>
+<nav class="nav">
+<a href="/">▦ &nbsp; Finance Dashboard</a>
+<a href="/subscriptions/">◴ &nbsp; Subscriptions</a>
+<a href="/subscriptions/new/">＋ &nbsp; New Subscription</a>
+<a class="active" href="/customers/">♙ &nbsp; Customers</a>
+</nav>
+<div class="nav-label">BILLING & INVOICES</div>
+<nav class="nav"><a href="/admin/">▤ &nbsp; Billing Administration</a></nav>
+<div class="nav-label">CONFIGURATION</div>
+<nav class="nav">
+<a href="/admin/core/product/">▣ &nbsp; Products</a>
+<a href="/admin/core/plan/">◇ &nbsp; Plans</a>
+</nav>
+</aside>
+<div class="main">
+<header class="topbar">
+<span>Brightloop ERP / <strong>Customers</strong></span>
+<strong>Administrator &nbsp; ◉</strong>
+</header>
+<main class="content">
+<div class="heading">
+<div><h1>Customers</h1><p class="subtitle">Manage your customer relationships and account information.</p></div>
+<a class="btn" href="/customers/new/">＋ Add Customer</a>
+</div>
+
+<div class="stat">
+<small>Total Registered Customers</small>
+<strong>{{ total_customers }}</strong>
+</div>
+
+<section class="panel">
+<h2>Customer Directory</h2>
+<form method="get" class="filters">
+<input type="search" name="search" placeholder="Search name, company or email..." value="{{ search }}">
+<button class="btn" type="submit">Search</button>
+</form>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>CUSTOMER</th><th>COMPANY</th><th>EMAIL</th><th>PHONE</th><th>REGISTERED</th></tr>
+</thead>
+<tbody>
+{% for customer in customers %}
+<tr>
+<td><span class="avatar">{{ customer.name|first|upper }}</span>{{ customer.name }}</td>
+<td>{{ customer.company_name|default:"—" }}</td>
+<td class="email">{{ customer.email }}</td>
+<td>{{ customer.phone|default:"—" }}</td>
+<td>{{ customer.created_at|date:"d M Y" }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="5" class="empty">No customers found. Add your first customer to get started.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</section>
+<div class="footer">Brightloop ERP · Business Management Platform</div>
+</main>
+</div>
+</div>
+</body>
+</html>

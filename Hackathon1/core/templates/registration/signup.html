@@ -1,0 +1,5 @@
+{% extends "registration/auth_base.html" %}
+{% block title %}Create account | Brightloop{% endblock %}
+{% block body %}<h1>Create your account</h1><p class="subtitle">Set up a customer portal with a verified unique email address.</p>
+<form method="post">{% csrf_token %}{% for field in form %}<div class="field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}{% for error in field.errors %}<ul class="errorlist"><li>{{ error }}</li></ul>{% endfor %}</div>{% endfor %}<button class="button" type="submit">Create account</button></form>
+<div class="links"><span>Already registered?</span><a href="{% url 'login' %}">Sign in</a></div>{% endblock %}

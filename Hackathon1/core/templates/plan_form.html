@@ -1,0 +1,175 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Plan | Brightloop ERP</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7f6fc;
+            color: #25213b;
+        }
+        .sidebar {
+            width: 245px;
+            height: 100vh;
+            position: fixed;
+            background: white;
+            border-right: 1px solid #ece9f4;
+            padding: 28px 18px;
+        }
+        .brand {
+            font-size: 23px;
+            font-weight: 800;
+            color: #6841d9;
+            margin: 0 0 38px 10px;
+        }
+        .nav {
+            display: block;
+            padding: 13px 14px;
+            margin: 6px 0;
+            border-radius: 9px;
+            text-decoration: none;
+            color: #68647a;
+            font-size: 14px;
+        }
+        .nav:hover, .nav.active {
+            background: #f0ebff;
+            color: #6841d9;
+            font-weight: 700;
+        }
+        .main { margin-left: 245px; padding: 40px 45px; }
+        h1 { margin: 0 0 8px; font-size: 27px; }
+        .muted { color: #89859a; font-size: 14px; }
+        .panel {
+            background: white;
+            border: 1px solid #eeeaf5;
+            border-radius: 14px;
+            padding: 30px;
+            max-width: 750px;
+            margin-top: 28px;
+        }
+        .field { margin-bottom: 22px; }
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 9px;
+        }
+        input[type="text"], input[type="number"], textarea, select {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #e5e1ed;
+            border-radius: 8px;
+            font: inherit;
+            background: white;
+            outline: none;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-color: #7048df;
+        }
+        textarea { min-height: 100px; resize: vertical; }
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+        .checkbox label { margin: 0; }
+        .error { color: #d43d52; font-size: 13px; margin-top: 6px; }
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            border-radius: 9px;
+            background: #7048df;
+            color: white;
+            border: 0;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .cancel { background: #f0eef5; color: #625d70; }
+        @media(max-width: 800px) {
+            .sidebar { width: 185px; }
+            .main { margin-left: 185px; padding: 25px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="brand">Brightloop.</div>
+    <a class="nav" href="/">▦ Dashboard</a>
+    <a class="nav" href="/subscriptions/">▤ Subscriptions</a>
+    <a class="nav" href="/customers/">♙ Customers</a>
+    <a class="nav" href="/products/">▣ Products</a>
+    <a class="nav active" href="/plans/">◇ Plans</a>
+    <a class="nav" href="/admin/">⚙ Administration</a>
+</aside>
+
+<main class="main">
+    <h1>Create Subscription Plan</h1>
+    <p class="muted">Set up pricing and recurring billing for your customers.</p>
+
+    <section class="panel">
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="field">
+                <label for="{{ form.name.id_for_label }}">Plan Name</label>
+                {{ form.name }}
+                {% for error in form.name.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="field">
+                <label for="{{ form.description.id_for_label }}">Description</label>
+                {{ form.description }}
+                {% for error in form.description.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="field">
+                <label for="{{ form.price.id_for_label }}">Price (₹)</label>
+                {{ form.price }}
+                {% for error in form.price.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="field">
+                <label for="{{ form.billing_cycle.id_for_label }}">Billing Cycle</label>
+                {{ form.billing_cycle }}
+                {% for error in form.billing_cycle.errors %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="field">
+                <div class="checkbox">
+                    {{ form.is_active }}
+                    <label for="{{ form.is_active.id_for_label }}">Active plan</label>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="button" type="submit">Save Plan</button>
+                <a class="button cancel" href="{% url 'plans' %}">Cancel</a>
+            </div>
+        </form>
+    </section>
+</main>
+
+</body>
+</html>

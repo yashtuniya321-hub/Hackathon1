@@ -1,0 +1,150 @@
+
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subscriptions | Brightloop</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f5f5fb;color:#29283f}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:218px;background:white;border-right:1px solid #e9e7f0;padding:25px 14px;flex-shrink:0}
+.brand{font-size:19px;font-weight:800;margin:4px 10px 55px;color:#29283f}
+.brand span{display:inline-grid;place-items:center;background:#7950bb;color:white;border-radius:12px;width:39px;height:39px;margin-right:9px}
+.nav-label{font-size:10px;font-weight:800;letter-spacing:1.5px;color:#a4a1b7;margin:25px 10px 12px}
+.nav a{display:block;text-decoration:none;color:#77748d;font-size:13px;font-weight:600;padding:12px;border-radius:10px;margin:4px 0}
+.nav a.active,.nav a:hover{background:#7950bb;color:white}
+.main{flex:1;min-width:0}
+.topbar{height:68px;background:white;border-bottom:1px solid #e9e7f0;display:flex;align-items:center;justify-content:space-between;padding:0 30px;font-size:12px;color:#77748d}
+.content{padding:30px;max-width:1450px;margin:auto}
+.heading{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:25px}
+h1{font-size:26px;letter-spacing:-1px}
+.subtitle{color:#9290a7;font-size:13px;margin-top:6px}
+.btn{background:#7950bb;color:white;text-decoration:none;border:0;border-radius:9px;padding:13px 18px;font-weight:700;font-size:12px;cursor:pointer;display:inline-block}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:22px}
+.stat,.panel{background:white;border:1px solid #ebe9f1;border-radius:14px;padding:22px;box-shadow:0 5px 18px #30205b08}
+.stat small{color:#9290a7;font-size:12px;font-weight:600}
+.stat strong{display:block;font-size:27px;margin-top:12px}
+.panel{padding:22px;margin-bottom:20px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.panel h2{font-size:16px}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+input{border:1px solid #e5e2ed;border-radius:9px;padding:11px 13px;background:white;color:#333;font-size:12px;outline:none;min-width:220px;flex:1}
+.filter-btn{background:#f1edf8;color:#7650b4;text-decoration:none;padding:10px 13px;border-radius:8px;font-size:11px;font-weight:700}
+.filter-btn.selected{background:#7950bb;color:white}
+table{width:100%;border-collapse:collapse;text-align:left}
+th{font-size:10px;letter-spacing:.8px;color:#9290a7;background:#faf9fc;padding:14px 11px}
+td{padding:17px 11px;border-bottom:1px solid #f0eef4;font-size:12px;font-weight:600}
+.muted{color:#9290a7;font-size:11px;font-weight:400;margin-top:4px}
+.id{color:#7950bb;font-weight:800}
+.status{display:inline-block;padding:6px 10px;border-radius:20px;background:#f0eafa;color:#7950bb;font-size:10px;font-weight:800}
+.status.Active{background:#e1f7ee;color:#07976a}
+.status.Closed{background:#fce9e9;color:#c44e4e}
+.status.Confirmed{background:#e8f0ff;color:#4778c7}
+.status.Quotation{background:#fff4df;color:#b17a22}
+.actions{display:inline-block;color:#7950bb;text-decoration:none;font-weight:800;padding:7px 10px;border:1px solid #e8e1f2;border-radius:7px;margin:2px}
+.invoice-btn{display:inline-block;background:#7950bb;color:white;text-decoration:none;font-weight:700;padding:8px 10px;border-radius:7px;margin:2px}
+.empty{text-align:center;padding:45px;color:#9290a7}
+.footer{text-align:center;color:#aaa7b6;font-size:10px;padding:22px}
+@media(max-width:850px){.sidebar{width:175px}.content{padding:20px}.stats{grid-template-columns:1fr}.table-wrap{overflow-x:auto}table{min-width:950px}}
+@media(max-width:580px){.sidebar{display:none}.topbar{padding:0 16px}.content{padding:16px}.heading{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+<div class="brand"><span>B</span>Brightloop</div>
+<div class="nav-label">OPERATIONS & SALES</div>
+<nav class="nav">
+<a href="/">▦ &nbsp; Finance Dashboard</a>
+<a class="active" href="/subscriptions/">◴ &nbsp; Subscriptions</a>
+<a href="/subscriptions/new/">＋ &nbsp; New Subscription</a>
+<a href="/customers/">♙ &nbsp; Customers</a>
+</nav>
+<div class="nav-label">BILLING & INVOICES</div>
+<nav class="nav">
+<a href="/invoices/">▤ &nbsp; Invoices</a>
+</nav>
+<div class="nav-label">CONFIGURATION</div>
+<nav class="nav">
+<a href="/products/">▣ &nbsp; Products</a>
+<a href="/plans/">◇ &nbsp; Plans</a>
+</nav>
+</aside>
+
+<div class="main">
+<header class="topbar">
+<span>Brightloop ERP / <strong>Subscriptions</strong></span>
+<strong>Administrator &nbsp; ◉</strong>
+</header>
+
+<main class="content">
+<div class="heading">
+<div>
+<h1>Subscriptions</h1>
+<p class="subtitle">Manage customer subscriptions and their lifecycle.</p>
+</div>
+<a class="btn" href="/subscriptions/new/">＋ New Subscription</a>
+</div>
+
+<div class="stats">
+<div class="stat"><small>Total Subscriptions</small><strong>{{ total_count }}</strong></div>
+<div class="stat"><small>Active Subscriptions</small><strong>{{ active_count }}</strong></div>
+<div class="stat"><small>Monthly Recurring Revenue</small><strong>₹{{ revenue|intcomma }}</strong></div>
+</div>
+
+<section class="panel">
+<div class="panel-head"><h2>All Subscription Records</h2></div>
+
+<form method="get" class="filters">
+<input type="search" name="search" placeholder="Search customer or subscription ID..." value="{{ search }}">
+<button class="btn" type="submit">Search</button>
+<a class="filter-btn {% if not selected_status %}selected{% endif %}" href="/subscriptions/">All</a>
+{% for value,label in statuses %}
+<a class="filter-btn {% if selected_status == value %}selected{% endif %}" href="?status={{ value }}{% if search %}&search={{ search|urlencode }}{% endif %}">{{ label }}</a>
+{% endfor %}
+</form>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>SUBSCRIPTION ID</th>
+<th>CUSTOMER</th>
+<th>PLAN</th>
+<th>START DATE</th>
+<th>STATUS</th>
+<th>VALUE</th>
+<th>ACTIONS</th>
+</tr>
+</thead>
+<tbody>
+{% for sub in subscriptions %}
+<tr>
+<td class="id">{{ sub.subscription_number }}</td>
+<td>{{ sub.customer.name }}<div class="muted">{{ sub.customer.company_name }}</div></td>
+<td>{{ sub.plan.name }}</td>
+<td>{{ sub.start_date|date:"d M Y" }}</td>
+<td><span class="status {{ sub.status }}">{{ sub.status }}</span></td>
+<td>₹{{ sub.total_amount|floatformat:2|intcomma }}</td>
+<td>
+<a class="actions" href="{% url 'subscription_edit' sub.pk %}">Edit</a>
+<a class="invoice-btn" href="{% url 'invoice_create' sub.pk %}">Generate Invoice</a>
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="7" class="empty">No subscriptions found. Create your first subscription to get started.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</section>
+
+<div class="footer">Brightloop ERP · Business Management Platform</div>
+</main>
+</div>
+</div>
+</body>
+</html>

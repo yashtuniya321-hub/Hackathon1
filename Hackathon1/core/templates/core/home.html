@@ -1,0 +1,48 @@
+{% extends "core/base.html" %}
+{% load humanize %}
+{% block title %}Finance dashboard | Brightloop{% endblock %}
+{% block breadcrumb %}Finance dashboard{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div><h1>Finance dashboard</h1><p class="subtitle">Subscription health, payments, and revenue in one view.</p></div>
+  <a class="button" href="{% url 'subscription_create' %}">＋ New subscription</a>
+</section>
+<div class="stats">
+  <article class="stat"><div class="stat-label">Active subscriptions</div><div class="stat-value">{{ active_count|intcomma }}</div><div class="stat-note">Across the customer base</div></article>
+  <article class="stat"><div class="stat-label">Monthly recurring revenue</div><div class="stat-value">₹{{ monthly_revenue|floatformat:2|intcomma }}</div><div class="stat-note">Normalized across billing cycles</div></article>
+  <article class="stat"><div class="stat-label">Payments received</div><div class="stat-value">₹{{ paid_revenue|floatformat:2|intcomma }}</div><div class="stat-note">For the selected month</div></article>
+  <article class="stat"><div class="stat-label">Outstanding balance</div><div class="stat-value">₹{{ outstanding_amount|floatformat:2|intcomma }}</div><div class="stat-note">{{ overdue_count }} overdue invoice{{ overdue_count|pluralize }}</div></article>
+</div>
+<section class="panel">
+  <div class="panel-head"><div><h2>Subscription pipeline</h2><p>{{ customer_count }} customers · {{ plan_count }} active plans</p></div></div>
+  <form class="filters" method="get">
+    <input type="month" name="month" value="{{ month }}" aria-label="Report month">
+    <input type="search" name="search" value="{{ search }}" placeholder="Search customer or subscription">
+    <select name="status" aria-label="Subscription status"><option value="">All subscription statuses</option>{% for value,label in subscription_statuses %}<option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+    <button class="button button-small" type="submit">Apply filters</button>
+    <a class="button-secondary button-small" href="{% url 'home' %}">Clear</a>
+  </form>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Subscription</th><th>Customer</th><th>Plan</th><th>Billing cycle</th><th>Start date</th><th>Status</th><th></th></tr></thead>
+    <tbody>{% for sub in subscriptions %}<tr>
+      <td><a class="ref" href="{% url 'subscriptions' %}?search={{ sub.subscription_number|urlencode }}">{{ sub.subscription_number }}</a></td>
+      <td>{{ sub.customer.name }}<div class="muted">{{ sub.customer.company_name }}</div></td>
+      <td>{{ sub.plan.name }}</td><td>{{ sub.plan.billing_cycle }}</td><td>{{ sub.start_date|date:"d M Y" }}</td>
+      <td><span class="badge {{ sub.status }}">{{ sub.status }}</span></td>
+      <td><a class="button-secondary button-small" href="{% url 'subscriptions' %}?search={{ sub.subscription_number|urlencode }}">Open</a></td>
+    </tr>{% empty %}<tr><td colspan="7" class="empty">No subscriptions match these filters.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+<section class="panel">
+  <div class="panel-head"><div><h2>Invoices</h2><p>Review billing and follow up on balances.</p></div><a href="{% url 'invoices' %}">View all invoices →</a></div>
+  <form class="filters" method="get">
+    <input type="hidden" name="month" value="{{ month }}">
+    <select name="invoice_status" aria-label="Invoice status"><option value="">All invoice statuses</option>{% for value,label in invoice_statuses %}<option value="{{ value }}" {% if selected_invoice_status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+    <button class="button button-small" type="submit">Filter invoices</button>
+  </form>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Invoice</th><th>Customer</th><th>Period</th><th>Due date</th><th>Amount</th><th>Status</th></tr></thead>
+    <tbody>{% for invoice in invoices %}<tr><td><a class="ref" href="{% url 'invoice_detail' invoice.pk %}">{{ invoice.invoice_number }}</a></td><td>{{ invoice.subscription.customer.name }}</td><td>{{ invoice.period_start|date:"d M Y" }} – {{ invoice.period_end|date:"d M Y" }}</td><td>{{ invoice.due_date|date:"d M Y" }}</td><td>₹{{ invoice.total_amount|floatformat:2|intcomma }}</td><td><span class="badge {{ invoice.status }}">{{ invoice.status }}</span></td></tr>{% empty %}<tr><td colspan="6" class="empty">No invoices match these filters.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "core/base.html" %}
+{% block title %}{{ title }} | Brightloop{% endblock %}
+{% block breadcrumb %}{{ title }}{% endblock %}
+{% block content %}
+<section class="page-head"><div><h1>{{ title }}</h1><p class="subtitle">Add business details to the Brightloop workspace.</p></div></section>
+<section class="panel form-panel"><form method="post">{% csrf_token %}
+  {% if form.non_field_errors %}<div class="message error">{{ form.non_field_errors }}</div>{% endif %}
+  {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+  <div class="form-grid">{% for field in form.visible_fields %}<div class="form-field {% if field.field.widget.input_type == 'checkbox' %}checkbox-field{% endif %}">{% if field.field.widget.input_type == 'checkbox' %}{{ field }}<label for="{{ field.id_for_label }}">{{ field.label }}</label>{% else %}<label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% endif %}{% if field.help_text %}<span class="helptext">{{ field.help_text }}</span>{% endif %}{% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}</div>{% endfor %}</div>
+  <div class="form-actions"><button class="button" type="submit">Save</button><a class="button-secondary" href="{% url cancel_url %}">Cancel</a></div>
+</form></section>
+{% endblock %}

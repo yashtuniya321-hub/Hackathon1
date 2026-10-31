@@ -1,0 +1,28 @@
+{% extends "core/base.html" %}
+{% load humanize %}
+{% block title %}My account | Brightloop{% endblock %}
+{% block breadcrumb %}Customer portal{% endblock %}
+{% block content %}
+<section class="page-head"><div><h1>Welcome, {{ customer.name }}</h1><p class="subtitle">View and manage your subscriptions, invoices, and payments.</p></div><a class="button" href="{% url 'plans' %}">Explore plans</a></section>
+<div class="stats">
+  <article class="stat"><div class="stat-label">Active subscriptions</div><div class="stat-value">{{ active_count }}</div><div class="stat-note">Your active services</div></article>
+  <article class="stat"><div class="stat-label">Open invoices</div><div class="stat-value">{{ open_invoice_count }}</div><div class="stat-note">Confirmed or overdue</div></article>
+  <article class="stat"><div class="stat-label">Account email</div><div class="stat-value" style="font-size:16px;overflow-wrap:anywhere">{{ customer.email }}</div><div class="stat-note">Used for account notices</div></article>
+  <article class="stat"><div class="stat-label">Company</div><div class="stat-value" style="font-size:17px">{{ customer.company_name|default:"Personal account" }}</div><div class="stat-note">Customer profile</div></article>
+</div>
+<section class="panel"><div class="panel-head"><div><h2>Your subscriptions</h2><p>Pause, resume, close, or renew a subscription from its current state.</p></div><a href="{% url 'subscriptions' %}">See all →</a></div>
+  <div class="table-wrap"><table><thead><tr><th>Subscription</th><th>Plan</th><th>Start</th><th>Expiry</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+    {% for sub in subscriptions %}<tr><td class="ref">{{ sub.subscription_number }}</td><td>{{ sub.plan.name }}</td><td>{{ sub.start_date|date:"d M Y" }}</td><td>{{ sub.expiry_date|date:"d M Y"|default:"—" }}</td><td><span class="badge {{ sub.status }}">{{ sub.status }}</span></td><td><div class="row-actions">
+      {% if sub.status == "Active" %}<form class="inline-form" method="post" action="{% url 'subscription_action' sub.pk 'pause' %}">{% csrf_token %}<button class="button-secondary button-small">Pause</button></form>{% endif %}
+      {% if sub.status == "Paused" %}<form class="inline-form" method="post" action="{% url 'subscription_action' sub.pk 'resume' %}">{% csrf_token %}<button class="button-secondary button-small">Resume</button></form>{% endif %}
+      {% if sub.status != "Closed" and sub.status != "Draft" %}<form class="inline-form" method="post" action="{% url 'subscription_action' sub.pk 'close' %}">{% csrf_token %}<button class="button-danger button-small">Close</button></form>{% endif %}
+      {% if sub.status == "Closed" or sub.expiry_date and sub.status != "Draft" and sub.status != "Quotation" %}<form class="inline-form" method="post" action="{% url 'subscription_action' sub.pk 'renew' %}">{% csrf_token %}<button class="button-secondary button-small">Renew</button></form>{% endif %}
+    </div></td></tr>{% empty %}<tr><td colspan="6" class="empty">You have no subscriptions yet. Browse a plan to get started.</td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+<section class="panel"><div class="panel-head"><div><h2>Your latest invoices</h2><p>Open an invoice to review line items and payment status.</p></div><a href="{% url 'invoices' %}">See all →</a></div>
+  <div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Billing period</th><th>Due date</th><th>Total</th><th>Status</th></tr></thead><tbody>
+    {% for invoice in invoices %}<tr><td><a class="ref" href="{% url 'invoice_detail' invoice.pk %}">{{ invoice.invoice_number }}</a></td><td>{{ invoice.period_start|date:"d M Y" }} – {{ invoice.period_end|date:"d M Y" }}</td><td>{{ invoice.due_date|date:"d M Y" }}</td><td>₹{{ invoice.total_amount|floatformat:2|intcomma }}</td><td><span class="badge {{ invoice.status }}">{{ invoice.status }}</span></td></tr>{% empty %}<tr><td colspan="5" class="empty">No invoices are available yet.</td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+{% endblock %}

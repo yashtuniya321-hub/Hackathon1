@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Invoices | Brightloop ERP</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f7f6fc;color:#24213a}
+.sidebar{width:230px;height:100vh;position:fixed;background:#21183f;color:white;padding:28px 18px}
+.brand{font-size:22px;font-weight:bold;margin-bottom:38px}
+.nav{display:block;color:#d6d0e8;text-decoration:none;padding:13px;border-radius:9px;margin-bottom:7px}
+.nav:hover,.active{background:#7049d8;color:white}
+main{margin-left:230px;padding:35px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+h1{font-size:28px}
+.subtitle{color:#858197;margin-top:7px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:25px}
+.card,.panel{background:white;border:1px solid #eeeaf6;border-radius:14px;padding:22px}
+.card p{color:#858197;font-size:14px}
+.card h2{margin-top:12px;font-size:27px}
+.panel{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:750px}
+th,td{text-align:left;padding:16px 12px;border-bottom:1px solid #f0edf5;font-size:14px}
+th{color:#858197}
+.status{display:inline-block;padding:6px 11px;border-radius:20px;font-size:12px;font-weight:bold}
+.Paid{background:#e4f8ed;color:#16834a}
+.Unpaid{background:#fff3d9;color:#a66b00}
+.Overdue{background:#ffe6e6;color:#c03939}
+.Cancelled{background:#eeeaf4;color:#706783}
+button{background:#7049d8;color:white;border:0;padding:8px 12px;border-radius:7px;cursor:pointer}
+.empty{text-align:center;padding:45px;color:#858197}
+.back{color:#7049d8;text-decoration:none;font-weight:bold}
+@media(max-width:750px){.sidebar{width:65px;padding:20px 8px}.brand{font-size:0}.nav{font-size:0;text-align:center}main{margin-left:65px;padding:20px}.cards{grid-template-columns:1fr}.top{flex-direction:column;align-items:flex-start;gap:12px}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+<div class="brand">Brightloop</div>
+<a href="/" class="nav">Dashboard</a>
+<a href="/subscriptions/" class="nav">Subscriptions</a>
+<a href="/customers/" class="nav">Customers</a>
+<a href="/products/" class="nav">Products</a>
+<a href="/plans/" class="nav">Plans</a>
+<a href="/invoices/" class="nav active">Invoices</a>
+</aside>
+<main>
+<div class="top">
+<div><h1>Invoices</h1><p class="subtitle">Manage invoices and subscription payments.</p></div>
+<a href="/subscriptions/" class="back">← Subscriptions</a>
+</div>
+<section class="cards">
+<div class="card"><p>Total Invoices</p><h2>{{ total_invoices }}</h2></div>
+<div class="card"><p>Paid Invoices</p><h2>{{ paid_invoices }}</h2></div>
+<div class="card"><p>Unpaid Invoices</p><h2>{{ unpaid_invoices }}</h2></div>
+</section>
+<section class="panel">
+<h2 style="font-size:19px;margin-bottom:20px">All Invoices</h2>
+{% if invoices %}
+<table>
+<thead><tr><th>Invoice</th><th>Customer</th><th>Subscription</th><th>Issue Date</th><th>Due Date</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
+<tbody>
+{% for invoice in invoices %}
+<tr>
+<td><strong>{{ invoice.invoice_number }}</strong></td>
+<td>{{ invoice.subscription.customer.name }}</td>
+<td>{{ invoice.subscription.subscription_number }}</td>
+<td>{{ invoice.issue_date|date:"d M Y" }}</td>
+<td>{{ invoice.due_date|date:"d M Y" }}</td>
+<td>₹{{ invoice.total_amount|floatformat:2 }}</td>
+<td><span class="status {{ invoice.status }}">{{ invoice.status }}</span></td>
+<td>
+{% if invoice.status == 'Unpaid' or invoice.status == 'Overdue' %}
+<form method="POST" action="{% url 'invoice_mark_paid' invoice.pk %}">
+{% csrf_token %}
+<button type="submit">Mark Paid</button>
+</form>
+{% else %}
+—
+{% endif %}
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% else %}
+<div class="empty"><h3>No invoices yet</h3><p style="margin-top:8px">Generate an invoice from a subscription.</p></div>
+{% endif %}
+</section>
+</main>
+</body>
+</html>

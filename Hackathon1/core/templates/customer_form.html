@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Customer | Brightloop ERP</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f5f5fb;color:#29283f}
+header{height:68px;background:white;border-bottom:1px solid #e9e7f0;display:flex;align-items:center;justify-content:space-between;padding:0 6%}
+.brand{font-size:19px;font-weight:800;display:flex;align-items:center;gap:10px}
+.logo{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:#7950bb;color:white}
+header a{color:#7950bb;text-decoration:none;font-size:12px;font-weight:700}
+.container{max-width:850px;margin:38px auto;padding:0 20px}
+h1{font-size:25px;letter-spacing:-.8px}
+.subtitle{font-size:13px;color:#9290a7;margin-top:7px}
+.card{background:white;border:1px solid #ebe9f1;border-radius:15px;padding:27px;margin-top:25px;box-shadow:0 5px 18px #30205b08}
+h2{font-size:15px;margin-bottom:24px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.field{margin-bottom:19px}
+label{display:block;font-size:11px;font-weight:700;margin-bottom:8px}
+input,textarea{width:100%;border:1px solid #e5e2ed;border-radius:9px;padding:12px;background:white;color:#29283f;font-size:12px;outline:none;font-family:inherit}
+input{height:44px}
+textarea{resize:vertical;min-height:90px}
+input:focus,textarea:focus{border-color:#7950bb;box-shadow:0 0 0 3px #7950bb18}
+.error{font-size:11px;color:#d34e4e;margin-top:6px}
+.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:10px}
+button,.cancel{border:0;border-radius:9px;padding:13px 19px;font-size:12px;font-weight:800;cursor:pointer;text-decoration:none}
+button{background:#7950bb;color:white}
+.cancel{background:#f1edf8;color:#7950bb}
+.message{padding:13px 15px;background:#e5f7ef;color:#07865d;border-radius:9px;font-size:12px;margin-top:20px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.card{padding:19px}}
+</style>
+</head>
+<body>
+<header>
+<div class="brand"><span class="logo">B</span>Brightloop <small style="font-size:9px;color:#999;letter-spacing:1px">ERP MANAGEMENT</small></div>
+<a href="/customers/">← Back to Customers</a>
+</header>
+<main class="container">
+<h1>Add New Customer</h1>
+<p class="subtitle">Create a customer profile and save their account information.</p>
+
+{% if messages %}
+{% for message in messages %}
+<div class="message">{{ message }}</div>
+{% endfor %}
+{% endif %}
+
+<form method="POST" class="card">
+{% csrf_token %}
+<h2>Customer Information</h2>
+
+{% if form.non_field_errors %}
+<div class="error">{{ form.non_field_errors }}</div>
+{% endif %}
+
+<div class="grid">
+<div class="field">
+<label for="{{ form.name.id_for_label }}">Full Name *</label>
+{{ form.name }}
+{% for error in form.name.errors %}<div class="error">{{ error }}</div>{% endfor %}
+</div>
+<div class="field">
+<label for="{{ form.company_name.id_for_label }}">Company Name</label>
+{{ form.company_name }}
+{% for error in form.company_name.errors %}<div class="error">{{ error }}</div>{% endfor %}
+</div>
+<div class="field">
+<label for="{{ form.email.id_for_label }}">Email Address *</label>
+{{ form.email }}
+{% for error in form.email.errors %}<div class="error">{{ error }}</div>{% endfor %}
+</div>
+<div class="field">
+<label for="{{ form.phone.id_for_label }}">Phone Number</label>
+{{ form.phone }}
+{% for error in form.phone.errors %}<div class="error">{{ error }}</div>{% endfor %}
+</div>
+</div>
+
+<div class="field">
+<label for="{{ form.address.id_for_label }}">Address</label>
+{{ form.address }}
+{% for error in form.address.errors %}<div class="error">{{ error }}</div>{% endfor %}
+</div>
+
+<div class="actions">
+<a class="cancel" href="/customers/">Cancel</a>
+<button type="submit">Save Customer →</button>
+</div>
+</form>
+</main>
+</body>
+</html>

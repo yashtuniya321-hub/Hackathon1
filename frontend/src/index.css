@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#F8F9FA] text-[#212529] font-sans text-sm;
+  }
+}
+
+/* Odoo-style Status Pipeline Ribbon */
+.status-ribbon-step {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1.25rem 0.4rem 1.5rem;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  transition: all 0.2s ease;
+  clip-path: polygon(0% 0%, calc(100% - 12px) 0%, 100% 50%, calc(100% - 12px) 100%, 0% 100%, 12px 50%);
+}
+
+.status-ribbon-step:first-child {
+  clip-path: polygon(0% 0%, calc(100% - 12px) 0%, 100% 50%, calc(100% - 12px) 100%, 0% 100%);
+  padding-left: 1rem;
+}
+
+.status-ribbon-step:last-child {
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 12px 50%);
+  padding-right: 1.25rem;
+}
+
+/* Print Styles for Invoices */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+  }
+  .no-print, header, nav, aside, .sidebar, .navbar, .action-buttons, .role-switcher {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .printable-card {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #c7cbd1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #714B67;
+}

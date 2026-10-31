@@ -1,7 +1,14 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 import { timingMiddleware } from './middleware/timing.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const frontendDist = path.join(__dirname, '../frontend/dist');
 
 // Import Routes
 import authRouter from './routes/auth.js';
@@ -30,8 +37,13 @@ if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('dev'));
 }
 
-// Health and Root Route
-app.get('/', (req, res) => {
+// Serve static frontend build if present
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+}
+
+// Health and API Root Route
+app.get('/api', (req, res) => {
   res.apiSuccess({
     service: 'Brightloop Software — Subscription Management System Backend',
     hackathon: 'Odoo x Flux Hackathon 2026',
@@ -63,6 +75,18 @@ app.use('/api/invoices', invoicesRouter);
 app.use('/api/payments', paymentsRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/customers', customersRouter);
+
+// Serve Frontend SPA for client routes
+app.use((req, res, next) => {
+  if (req.method !== 'GET' || req.path.startsWith('/api') || req.path === '/health') {
+    return next();
+  }
+  const indexPath = path.join(frontendDist, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    return res.sendFile(indexPath);
+  }
+  next();
+});
 
 // 404 Catch-All
 app.use((req, res) => {

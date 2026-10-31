@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brightloop — Subscription operations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#"><span class="brand-mark">b</span><span>brightloop</span></a>
+    <button class="workspace"><span class="avatar">B</span><span>Brightloop Software</span><span class="chev">⌄</span></button>
+    <nav>
+      <p class="nav-label">WORKSPACE</p>
+      <a class="nav-item active" href="#overview"><span>◫</span> Overview</a>
+      <a class="nav-item" href="#subscriptions"><span>◌</span> Subscriptions <b>24</b></a>
+      <a class="nav-item" href="#invoices"><span>▤</span> Invoices</a>
+      <a class="nav-item" href="#payments"><span>◈</span> Payments</a>
+      <p class="nav-label gap">CATALOG</p>
+      <a class="nav-item" href="#plans"><span>◇</span> Products & plans</a>
+      <a class="nav-item" href="#customers"><span>♙</span> Customers</a>
+      <a class="nav-item" href="#discounts"><span>♧</span> Discounts</a>
+      <p class="nav-label gap">SYSTEM</p>
+      <a class="nav-item" href="#settings"><span>⚙</span> Settings</a>
+    </nav>
+    <div class="profile"><div class="avatar violet">AM</div><div><strong>Alex Morgan</strong><small>Administrator</small></div><button aria-label="Profile menu">⋯</button></div>
+  </aside>
+  <main>
+    <header>
+      <div><p class="eyebrow">OCTOBER 2026</p><h1>Good morning, Alex <span>✦</span></h1><p class="subhead">Here’s what’s happening with Brightloop today.</p></div>
+      <div class="header-actions"><button class="icon-button" aria-label="Notifications">♢<i></i></button><button class="new-button" id="newSubscription">+ <span>New subscription</span></button></div>
+    </header>
+    <section class="kpis" id="overview">
+      <article class="kpi accent"><div class="kpi-top"><span>MONTHLY RECURRING REVENUE</span><span class="trend positive">↗ 8.4%</span></div><strong>$48,240</strong><p>vs. $44,496 last month</p><div class="spark peach"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
+      <article class="kpi"><div class="kpi-top"><span>ACTIVE SUBSCRIPTIONS</span><span class="round-icon blue">◌</span></div><strong>1,284</strong><p><em class="positive">+46</em> from last month</p><div class="mini-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
+      <article class="kpi"><div class="kpi-top"><span>OUTSTANDING BALANCE</span><span class="round-icon amber">$</span></div><strong>$12,860</strong><p><em class="negative">$3,420</em> overdue</p><div class="balance-line"><i></i></div></article>
+      <article class="kpi"><div class="kpi-top"><span>PAYMENTS COLLECTED</span><span class="round-icon green">✓</span></div><strong>$62,104</strong><p><em class="positive">+12.6%</em> from last month</p><div class="mini-bars green-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
+    </section>
+    <section class="content-grid">
+      <article class="panel revenue-panel"><div class="panel-head"><div><h2>Revenue overview</h2><p>Monthly recurring revenue over time</p></div><button class="select">Last 12 months <span>⌄</span></button></div><div class="legend"><span><i class="dot primary"></i> Recurring revenue</span><span><i class="dot pale"></i> One-time revenue</span></div><div class="chart"><div class="chart-y"><span>$60k</span><span>$40k</span><span>$20k</span><span>$0</span></div><svg viewBox="0 0 620 210" preserveAspectRatio="none" aria-label="Revenue trend chart"><defs><linearGradient id="fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#7968ed" stop-opacity=".26"/><stop offset="1" stop-color="#7968ed" stop-opacity="0"/></linearGradient></defs><path class="grid" d="M0 14H620M0 78H620M0 142H620M0 206H620"/><path class="area" d="M0 170 C25 160 37 155 55 161 S86 145 105 150 S133 141 155 144 S182 130 205 134 S232 116 258 125 S285 111 309 116 S335 100 360 108 S388 83 412 96 S438 88 464 79 S493 60 516 72 S544 49 570 59 S602 37 620 44 V210 H0Z"/><path class="line" d="M0 170 C25 160 37 155 55 161 S86 145 105 150 S133 141 155 144 S182 130 205 134 S232 116 258 125 S285 111 309 116 S335 100 360 108 S388 83 412 96 S438 88 464 79 S493 60 516 72 S544 49 570 59 S602 37 620 44"/><circle cx="516" cy="72" r="5" class="point"/><g class="tooltip"><rect x="469" y="15" rx="7" width="95" height="39"/><text x="480" y="31">OCT 2026</text><text x="480" y="45">$48,240</text></g></svg></div><div class="chart-x"><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span></div></article>
+      <article class="panel activity"><div class="panel-head"><div><h2>Recent activity</h2><p>Latest events across your workspace</p></div><button class="text-button">View all</button></div><div class="activity-list"><div class="activity-row"><span class="activity-icon mint">↑</span><div><strong>Payment received</strong><p>Acme Inc. paid invoice <b>INV-1048</b></p></div><time>2 min ago</time></div><div class="activity-row"><span class="activity-icon purple">＋</span><div><strong>New subscription</strong><p>Northstar Labs joined <b>Growth plan</b></p></div><time>18 min ago</time></div><div class="activity-row"><span class="activity-icon yellow">↻</span><div><strong>Subscription renewed</strong><p>Vertex Digital · <b>Pro plan</b></p></div><time>1 hr ago</time></div><div class="activity-row"><span class="activity-icon rose">!</span><div><strong>Invoice overdue</strong><p>Orbit Co. · <b>INV-1031</b></p></div><time>3 hrs ago</time></div></div></article>
+    </section>
+    <section class="panel subscriptions" id="subscriptions"><div class="panel-head"><div><h2>Subscriptions requiring attention <span class="count">6</span></h2><p>Keep your billing cycle moving smoothly.</p></div><button class="text-button">View subscriptions <span>→</span></button></div><div class="table-wrap"><table><thead><tr><th>Customer</th><th>PLAN</th><th>STATUS</th><th>NEXT BILLING</th><th>AMOUNT</th><th></th></tr></thead><tbody><tr><td><div class="customer"><span class="customer-avatar coral">NL</span><strong>Northstar Labs</strong></div></td><td>Growth · Monthly</td><td><span class="status active-dot">Active</span></td><td><b>Today</b></td><td><strong>$349.00</strong></td><td><button class="dots">•••</button></td></tr><tr><td><div class="customer"><span class="customer-avatar navy">OD</span><strong>Orbit Digital</strong></div></td><td>Pro · Annual</td><td><span class="status warning-dot">Payment failed</span></td><td><b>Oct 31, 2026</b></td><td><strong>$2,988.00</strong></td><td><button class="dots">•••</button></td></tr><tr><td><div class="customer"><span class="customer-avatar olive">AC</span><strong>Acme Inc.</strong></div></td><td>Enterprise · Annual</td><td><span class="status soon-dot">Renews soon</span></td><td><b>Nov 02, 2026</b></td><td><strong>$8,400.00</strong></td><td><button class="dots">•••</button></td></tr></tbody></table></div></section>
+  </main>
+  <div class="toast" id="toast">Subscription draft created <button>×</button></div>
+  <script src="app.js"></script>
+</body>
+</html>
